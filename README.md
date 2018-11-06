@@ -1,3 +1,14 @@
+fork to create a development redmine container.
+rails in development mode
+byebug gem installed
+add nano ubuntu package
+do not remove ubuntu packed
+
+create containers with docker-compose
+create database model with docker exec 34_redmine_1 bash then rakedb:migrate
+see log and interact with debugger with docker attach 34_redmine_1
+
+
 # https://github.com/docker-library/redmine
 
 ## Maintained by: [the Docker Community](https://github.com/docker-library/redmine)

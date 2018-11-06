@@ -1,0 +1,25 @@
+version: '3.2'
+
+services:
+
+  redmine:
+    build:
+      context: .
+      dockerfile: Dockerfile.development
+    restart: "no"
+    ports:
+      - "8080:3000"
+    links:
+      - database
+    environment:
+      REDMINE_DB_MYSQL: database
+      RAILS_ENV: 'development'
+    stdin_open: true
+    tty: true
+
+  database:
+    image: mysql:5.7
+    restart: "no"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: redmine_development

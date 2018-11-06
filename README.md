@@ -1,3 +1,9 @@
+fork to create a development redmine container.
+rails in development mode
+byebug gem installed
+add nano ubuntu package
+do not remove ubuntu packed
+
 # https://github.com/docker-library/redmine
 
 ## Maintained by: [the Docker Community](https://github.com/docker-library/redmine)

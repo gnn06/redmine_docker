@@ -9,6 +9,10 @@ services:
     restart: "no"
     ports:
       - "8080:3000"
+    volumes:
+      - type: bind
+        source: c:/temp/redmine-plugins
+        target: /usr/src/redmine/plugins
     links:
       - database
     environment:

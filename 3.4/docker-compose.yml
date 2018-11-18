@@ -11,6 +11,9 @@ services:
       - "8080:3000"
     volumes:
       - type: bind
+        source: c:/temp/redmine-source-container/redmine
+        target: /usr/src/redmine/
+      - type: bind
         source: c:/temp/redmine-plugins
         target: /usr/src/redmine/plugins
     links:
@@ -18,6 +21,7 @@ services:
     environment:
       REDMINE_DB_MYSQL: database
       RAILS_ENV: 'development'
+    entrypoint: bash
     stdin_open: true
     tty: true
 

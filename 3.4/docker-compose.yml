@@ -13,15 +13,17 @@ services:
       - type: bind
         source: c:/temp/redmine-source-container/redmine
         target: /usr/src/redmine/
-      - type: bind
-        source: c:/temp/redmine-plugins
-        target: /usr/src/redmine/plugins
+#      - type: volume
+#        source: myredmine
+#        target: /usr/src/redmine
+#      - type: bind
+#        source: c:/temp/redmine-plugins
+#        target: /usr/src/redmine/plugins
     links:
       - database
     environment:
       REDMINE_DB_MYSQL: database
       RAILS_ENV: 'development'
-    entrypoint: bash
     stdin_open: true
     tty: true
 
@@ -31,3 +33,6 @@ services:
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: redmine_development
+
+volumes:
+  myredmine:

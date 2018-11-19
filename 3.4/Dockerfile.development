@@ -40,7 +40,7 @@ RUN set -eux; \
 	wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
 	wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
 	export GNUPGHOME="$(mktemp -d)"; \
-	gpg --keyserver keyserver.ubuntu.com --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
+	gpg --no-tty --keyserver keyserver.ubuntu.com --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
 	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
 	gpgconf --kill all; \
 	rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc; \
@@ -53,7 +53,7 @@ RUN set -eux; \
 	wget -O /usr/local/bin/tini "https://github.com/krallin/tini/releases/download/v$TINI_VERSION/tini-$dpkgArch"; \
 	wget -O /usr/local/bin/tini.asc "https://github.com/krallin/tini/releases/download/v$TINI_VERSION/tini-$dpkgArch.asc"; \
 	export GNUPGHOME="$(mktemp -d)"; \
-	gpg --keyserver keyserver.ubuntu.com --recv-keys 6380DC428747F6C393FEACA59A84159D7001A4E5; \
+	gpg --no-tty --keyserver keyserver.ubuntu.com --recv-keys 6380DC428747F6C393FEACA59A84159D7001A4E5; \
 	gpg --batch --verify /usr/local/bin/tini.asc /usr/local/bin/tini; \
 	gpgconf --kill all; \
 	rm -r "$GNUPGHOME" /usr/local/bin/tini.asc; \
@@ -67,16 +67,19 @@ RUN set -eux; \
 
 # GOI 
 ENV RAILS_ENV development
-WORKDIR /usr/src/redmine
+
+#VOLUME /usr/src/redmine
+
+WORKDIR /usr/src
 
 ENV REDMINE_VERSION 3.4.6
 ENV REDMINE_DOWNLOAD_MD5 5f4993446ecf25782f469763c0d32ea1
 
-RUN wget -O redmine.tar.gz "https://www.redmine.org/releases/redmine-${REDMINE_VERSION}.tar.gz" \
-	&& echo "$REDMINE_DOWNLOAD_MD5 redmine.tar.gz" | md5sum -c - \
-	&& tar -xvf redmine.tar.gz --strip-components=1 \
-	&& rm redmine.tar.gz files/delete.me log/delete.me \
-	&& mkdir -p tmp/pdf public/plugin_assets \
+RUN git clone https://github.com/redmine/redmine.git
+
+WORKDIR /usr/src/redmine
+
+RUN mkdir -p tmp/pdf public/plugin_assets \
 	&& chown -R redmine:redmine ./
 
 RUN set -eux; \
@@ -113,34 +116,33 @@ RUN set -eux; \
 	rm freetds.tar.bz2; \
 	( cd freetds && gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" && ./configure --build="$gnuArch" --enable-silent-rules && make -j "$(nproc)" && make -C src install && make -C include install ); \
 	rm -rf freetds; \
-	bundle config build.tiny_tds --enable-system-freetds; \
-	\
-	for adapter in mysql2 ; do \
-		echo "$RAILS_ENV:" > ./config/database.yml; \
-		echo "  adapter: $adapter" >> ./config/database.yml; \
+	bundle config build.tiny_tds --enable-system-freetds;
+
+RUN echo "$RAILS_ENV:" > ./config/database.yml; \
+		echo "  adapter: mysql2" >> ./config/database.yml; \
 		echo "  host: database" >> ./config/database.yml; \
 		echo "  database: redmine_development" >> ./config/database.yml; \
-		echo "  username: root" >> ./config/database.yml; \
-		bundle install ; \
-		cp Gemfile.lock "Gemfile.lock.${adapter}"; \
-	done;
-	
+		echo "  username: root" >> ./config/database.yml;
+
 RUN bundle add byebug
+
+RUN bundle install ; \
+		cp Gemfile.lock "Gemfile.lock.mysql2";
 	
 RUN rake generate_secret_token
 
 # need to be launch manually ; use docker exec container bash
 #RUN rake db:migrate
 
-VOLUME /usr/src/redmine/files
+#VOLUME /usr/src/redmine/files
 
-COPY docker-entrypoint.sh /
+#COPY docker-entrypoint.sh /
 #ENTRYPOINT ["/docker-entrypoint.sh"]
 
 EXPOSE 3000
 #CMD ["rails", "server", "-b", "0.0.0.0"]
 #CMD /bin/bash
 
-#ENTRYPOINT /bin/bash
-ENTRYPOINT ["rails", "server", "-b", "0.0.0.0"]
+#ENTRYPOINT ["rails", "server", "-b", "0.0.0.0"]
+ENTRYPOINT ["/bin/bash"]
 

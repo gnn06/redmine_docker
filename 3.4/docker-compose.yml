@@ -16,9 +16,9 @@ services:
 #      - type: volume
 #        source: myredmine
 #        target: /usr/src/redmine
-#      - type: bind
-#        source: c:/temp/redmine-plugins
-#        target: /usr/src/redmine/plugins
+      - type: bind
+        source: c:/temp/redmine-plugins/plan_action
+        target: /usr/src/redmine/plugins/plan_action
     links:
       - database
     environment:

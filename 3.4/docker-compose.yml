@@ -17,8 +17,8 @@ services:
 #        source: myredmine
 #        target: /usr/src/redmine
       - type: bind
-        source: c:/temp/redmine-plugins/taskplan_redmine_plugin
-        target: /usr/src/redmine/plugins/taskplan_redmine_plugin
+        source: c:/temp/redmine-plugins/actionplan_redmine_plugin
+        target: /usr/src/redmine/plugins/actionplan_redmine_plugin
     links:
       - database
     environment:

@@ -10,12 +10,12 @@ services:
     ports:
       - "8080:3000"
     volumes:
-      - type: bind
-        source: c:/temp/redmine-source-container/redmine
-        target: /usr/src/redmine/
-#      - type: volume
-#        source: myredmine
-#        target: /usr/src/redmine
+      # - type: bind
+      #   source: c:/temp/redmine-source-container/redmine
+      #   target: /usr/src/redmine/
+      - type: volume
+        source: myredmine
+        target: /usr/src/redmine
       - type: bind
         source: c:/temp/redmine-plugins/actionplan_redmine_plugin
         target: /usr/src/redmine/plugins/actionplan_redmine_plugin
@@ -26,6 +26,11 @@ services:
       RAILS_ENV: 'development'
     stdin_open: true
     tty: true
+    entrypoint:
+      - rails
+      - server
+      - -b
+      - 0.0.0.0
 
   database:
     image: mysql:5.7
@@ -33,6 +38,16 @@ services:
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: redmine_development
+
+  samba:
+    image: dperson/samba
+    volumes:
+      - type: volume
+        source: myredmine
+        target: /usr/src/redmine
+    network_mode: "host"
+    command: -u "redmine;1234;999;redmine" -s "redmine;/usr/src/redmine;yes;no;no" -g "force user = redmine" -g "force group = ping"
+  
 
 volumes:
   myredmine:

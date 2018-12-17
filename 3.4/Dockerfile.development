@@ -134,7 +134,7 @@ RUN rake generate_secret_token
 # need to be launch manually ; use docker exec container bash
 #RUN rake db:migrate
 
-#VOLUME /usr/src/redmine/files
+VOLUME /usr/src/redmine
 
 #COPY docker-entrypoint.sh /
 #ENTRYPOINT ["/docker-entrypoint.sh"]

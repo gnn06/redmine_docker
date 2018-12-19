@@ -7,10 +7,11 @@ get redmine source from github
 1 volume to store redmine source
 samba server to access sources from host.
 
-create containers with docker-compose up
-create database model with docker exec 34_redmine_1 bash then rakedb:migrate
-open \\10.0.75.2\redmine
-see log and interact with debugger with docker attach 34_redmine_1
+- create containers with docker-compose up
+- create database model with docker exec 34_redmine_1 bash then rakedb:migrate
+- open \\10.0.75.2\redmine
+- see log and interact with debugger with docker attach 34_redmine_1
+- put your plugin source into \\10.0.75.2\redmine\plugins (git clone works)
 
 
 # https://github.com/docker-library/redmine

@@ -44,6 +44,8 @@ services:
         target: /usr/src/redmine
     network_mode: "host"
     command: -u "redmine;1234;999;redmine" -s "redmine;/usr/src/redmine;yes;no;no" -g "force user = " -g "force group = " -g "create mask = 0000" -g "force create mode = 600" 
+    depends_on:
+      - redmine
 
 volumes:
   myredmine:
